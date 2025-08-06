@@ -36,6 +36,8 @@ const CodeForm = ({ onNewSnippet }) => {
       case 'css':
         template = `/* Votre style CSS ici */\nbody {\n    font-family: Arial, sans-serif;\n}`;
         break;
+      default:
+        template = '';
     }
 
     setForm((prev) => ({
@@ -48,12 +50,11 @@ const CodeForm = ({ onNewSnippet }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/snippets', {
+      const response = await fetch('http://localhost:8000/api/snippets', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          Accept: 'application/json'
         },
         body: JSON.stringify(form)
       });
@@ -66,13 +67,14 @@ const CodeForm = ({ onNewSnippet }) => {
           category: '',
           code: ''
         });
-        onNewSnippet(); // recharger la liste
+
+        if (onNewSnippet) onNewSnippet();
       } else {
         const error = await response.json();
-        alert("Erreur : " + error.message);
+        alert("Erreur : " + (error.message || 'Une erreur est survenue'));
       }
     } catch (error) {
-      alert("Erreur lors de l'envoi");
+      alert("Erreur lors de l'envoi : " + error.message);
     }
   };
 
