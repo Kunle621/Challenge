@@ -7,7 +7,16 @@ function App() {
 
   const fetchSnippets = async () => {
     try {
-      const response = await fetch('/api/snippets');
+      const response = await fetch('http://localhost:8000/api/snippets', {
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Réponse non valide de l’API');
+      }
+
       const data = await response.json();
       setSnippets(data);
     } catch (error) {
@@ -20,7 +29,8 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div className="container mt-5">
+      <h1>CodeSpace - H24Code</h1>
       <CodeForm onNewSnippet={fetchSnippets} />
       <hr />
       <SnippetList snippets={snippets} />
